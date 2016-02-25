@@ -1,8 +1,7 @@
-package Tree;
+package tree;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.List;
 import java.util.Stack;
 
 /**
@@ -165,7 +164,7 @@ public class BinaryTreeNode {
     }
 
     public void print() {
-        System.out.println("Tree of size " + size());
+        System.out.println("tree of size " + size());
         print(1);
     }
 

@@ -1,7 +1,4 @@
-package TicTacToe;
-
-import java.util.LinkedList;
-import java.util.List;
+package tictactoe;
 
 /**
  * Created by Usiel on 23.02.2016.

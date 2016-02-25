@@ -1,8 +1,4 @@
-package List;
-
-import sun.awt.image.ImageWatched;
-
-import java.util.List;
+package list;
 
 /**
  * Created by Usiel on 23.02.2016.

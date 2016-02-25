@@ -1,6 +1,4 @@
-package Tree;
-
-import java.util.Arrays;
+package tree;
 
 /**
  * Created by Usiel on 21.02.2016.

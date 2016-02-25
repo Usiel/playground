@@ -1,4 +1,4 @@
-package TicTacToe;
+package tictactoe;
 
 /**
  * Created by Usiel on 23.02.2016.

@@ -1,4 +1,4 @@
-package Sorting;
+package sorting;
 
 /**
  * Created by Usiel on 21.02.2016.

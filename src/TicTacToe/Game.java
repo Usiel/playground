@@ -1,9 +1,4 @@
-package TicTacToe;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+package tictactoe;
 
 /**
  * Created by Usiel on 21.02.2016.
