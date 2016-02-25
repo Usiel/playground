@@ -34,33 +34,23 @@ public class BoardAnalyzer {
         int candidate;
         for (Line l : getLines(board)) {
             candidate = getWinner(l, board);
-            if (candidate > -1) {
+            if (candidate != 0) {
                 return candidate;
             }
         }
 
-        // no winner, but is it full?
-        for (int i=0; i<board.length; i++) {
-            for (int j=0; j<board[i].length; j++) {
-                if (board[i][j] == 0) {
-                    //not full!
-                    return -1;
-                }
-            }
-        }
-        // must be full
         return 0;
     }
 
     private int getWinner(Line l, int[][] board) {
         if (l.coordinates.stream().allMatch(p -> board[p.row][p.col] == 1)) {
-            return 1;
+            return Game.PLAYER_1_WINNING_SCORE;
         }
         if (l.coordinates.stream().allMatch(p -> board[p.row][p.col] == 2)) {
-            return 2;
+            return Game.PLAYER_2_WINNER_SCORE;
         }
 
-        return -1;
+        return 0;
     }
 
     public Move getWinningMove(int[][] board, int playerId) {
@@ -111,4 +101,23 @@ public class BoardAnalyzer {
     public Move getTwoWinMovesBlockingMove(int[][] board, int playerId) {
         return null;
     }
+
+    public boolean isGameOver(int[][] board) {
+        if (getWinner(board) != 0) {
+            return true;
+        }
+
+        // no winner, but is it full?
+        for (int i=0; i<board.length; i++) {
+            for (int j=0; j<board[i].length; j++) {
+                if (board[i][j] == 0) {
+                    //not full!
+                    return false;
+                }
+            }
+        }
+        // must be full
+        return true;
+    }
+
 }

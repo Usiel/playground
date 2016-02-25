@@ -2,11 +2,11 @@ package Sorting;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Sort {
     public static void main(String[] args) {
-        int len = 100000;
+        int len = 3000;
         int[] a = new int[len];
 
         fill(a);
@@ -18,9 +18,11 @@ public class Sort {
         strategies.add(new BubbleSort());
         strategies.add(new MergeSort());
         strategies.add(new IntroSort());
+        strategies.add(new MyNaiveCountingSort());
 
         //print(a);
         for (SortStrategy s : strategies) {
+            System.out.println();
             System.out.println(s.getClass());
             int[] toSort = a.clone();
             //print(s.sort(toSort));
@@ -47,9 +49,8 @@ public class Sort {
     }
 
     public static void fill(int[] a) {
-        Random r = new Random();
         for (int i=0; i<a.length; i++) {
-            a[i] = r.nextInt();
+            a[i] = ThreadLocalRandom.current().nextInt(-a.length/2, a.length/2);
         }
     }
 

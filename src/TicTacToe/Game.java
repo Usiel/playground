@@ -14,6 +14,9 @@ public class Game {
     private BoardAnalyzer analyzer;
     public int[][] board;
 
+    public static final int PLAYER_1_WINNING_SCORE = 10;
+    public static final int PLAYER_2_WINNER_SCORE = -10;
+
     public static void main(String[] args) {
         Game g = new Game(3);
         g.play();
@@ -21,18 +24,15 @@ public class Game {
 
     public Game(int size) {
         p1 = new Player(1, new TreeStrategy());
-        p2 = new Player(2, new ExplicitStrategy());
+        p2 = new Player(2, new TreeStrategy());
         analyzer = new BoardAnalyzer();
         board = new int[size][size];
     }
 
     public void play() {
         Player p = p1;
-        while (analyzer.getWinner(board) == -1) {
+        while (!analyzer.isGameOver(board)) {
             Move m = p.move(board.clone());
-            if (m == null) {
-                m = new RandomStrategy().getBestMove(board, p.id);
-            }
             board[m.getRow()][m.getCol()] = p.id;
             System.out.println("round over");
             p = p == p1 ? p2 : p1;

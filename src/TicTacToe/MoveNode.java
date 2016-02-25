@@ -9,76 +9,39 @@ public class MoveNode {
     public final int[][] board;
     public final int winner;
     public final int playerId;
+    public final boolean gameOver;
     public final Move move;
     public List<MoveNode> children;
     public MoveNode parent;
+    private MoveNode bestMove;
+    public int score;
 
     public MoveNode(int[][] board, int playerId, Move move) {
         this.board = board;
         this.playerId = playerId;
         this.winner = new BoardAnalyzer().getWinner(board);
+        this.gameOver = new BoardAnalyzer().isGameOver(board);
         this.move = move;
         this.children = new LinkedList<>();
     }
 
     public void add(MoveNode child) {
         child.parent = this;
-        child.generateOutcomes();
         this.children.add(child);
     }
 
-    public void pruneBadSubtrees() {
-        int playerToWin = Player.alternatePlayerId(this.playerId);
-        List<MoveNode> lost = search(Player.alternatePlayerId(playerToWin));
-
-        for (MoveNode m : lost) {
-            // remove this node's parent from this tree
-            m.detachParent();
-        }
-    }
-
-    public void pruneNeutralSubtrees() {
-        List<MoveNode> remis = searchRemis();
-
-        for (MoveNode m : remis) {
-            m.detachParent();
-        }
-    }
-
-    private List<MoveNode> searchRemis() {
-        return search(0);
-    }
-
-    private void detachParent() {
-        if (this.parent != null && this.parent.parent != null) {
-            this.parent.parent.children.remove(this.parent);
-        }
-    }
-
-    private List<MoveNode> search(int outcome) {
-        List<MoveNode> matchingOutcomes = new LinkedList<>();
-        if (winner == outcome) {
-            //opponent wins!
-            matchingOutcomes.add(this);
-            // no need to return subtrees
-            return matchingOutcomes;
-        }
-
-        for (MoveNode m : children) {
-            matchingOutcomes.addAll(m.search(outcome));
-        }
-
-        return matchingOutcomes;
-    }
-
     public void generateOutcomes() {
-        if (this.winner == -1) {
+        if (!this.gameOver) {
             // game open
             for (Move m : getLegalMoves(this.board)) {
                 int[][] hypoBoard = Player.copy(this.board);
                 hypoBoard[m.getRow()][m.getCol()] = Player.alternatePlayerId(this.playerId);
-                this.add(new MoveNode(hypoBoard, Player.alternatePlayerId(this.playerId), m));
+                MoveNode child = new MoveNode(hypoBoard, Player.alternatePlayerId(this.playerId), m);
+                child.generateOutcomes();
+                this.add(child);
             }
+        } else {
+            this.score = new BoardAnalyzer().getWinner(this.board);
         }
     }
 
@@ -94,29 +57,52 @@ public class MoveNode {
         return legalMoves;
     }
 
-    public Move findQuickestPathTo(int winner) {
-        if (this.winner == winner) {
-            return this.move;
+    public MoveNode getBestMove(int playerId) {
+        if (playerId == 1) {
+            //maximize
+            this.bestMove = getMaxMoveNode();
+        } else {
+            //minimize
+            this.bestMove =  getMinMoveNode();
         }
 
-        Queue<MoveNode> toVisit = new ArrayDeque<>();
-        toVisit.addAll(children);
-        //which move to winner outcome
-        while (toVisit.peek() != null) {
-            MoveNode current = toVisit.poll();
+        return bestMove;
+    }
 
-            if (current.winner == winner) {
-                while (current.parent != this) {
-                    current = current.parent;
-                }
-
-                return current.move;
+    public MoveNode getMinMoveNode() {
+        if (gameOver) {
+            this.score = this.winner;
+            return this;
+        }
+        MoveNode current;
+        MoveNode min = null;
+        for (MoveNode n : children) {
+            current = n.getMaxMoveNode();
+            if (min == null || current.winner < min.winner) {
+                min = n;
             }
-
-            toVisit.addAll(current.children);
         }
+        this.score = min.score;
+        this.bestMove = min;
+        return min;
+    }
 
-        return null;
+    public MoveNode getMaxMoveNode() {
+        if (gameOver) {
+            this.score = this.winner;
+            return this;
+        }
+        MoveNode current;
+        MoveNode max = null;
+        for (MoveNode n : children) {
+            current = n.getMinMoveNode();
+            if (max == null || current.winner > max.winner) {
+                max = n;
+            }
+        }
+        this.score = max.score;
+        this.bestMove = max;
+        return max;
     }
 }
 

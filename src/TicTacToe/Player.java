@@ -22,10 +22,10 @@ public class Player {
     }
 
     public Move move(int[][] board) {
-        return strategy.getBestMove(board, this.id);
+        return strategy.getBestMove(copy(board), this.id);
     }
 
     public static int alternatePlayerId(int playerId) {
-        return playerId%2 + 1;
+        return (playerId % 2) + 1;
     }
 }
